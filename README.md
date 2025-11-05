@@ -1,6 +1,6 @@
 # 📊 Open-VSX Download Tracker
 
-一个自动追踪 Open-VSX 插件下载量的工具，通过 GitHub Actions 每日定时运行，统计过去 24 小时的下载增长并发送邮件报告。
+一个自动追踪 Open-VSX 插件下载量的工具，通过 GitHub Actions 每日定时运行，统计过去 24 小时的下载增长，支持发送邮件报告(可选)。
 
 ## ✨ 功能特点
 

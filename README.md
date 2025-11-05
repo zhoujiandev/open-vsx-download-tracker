@@ -218,11 +218,20 @@ Cron 表达式格式：`分钟 小时 日 月 星期`（UTC 时间）
 3. 确认 SMTP 密码是否正确（Gmail 需使用应用专用密码）
 4. 查看 Actions 日志中的邮件发送状态
 
+### ValueError: invalid literal for int()
+
+如果看到类似 `ValueError: invalid literal for int() with base 10: ''` 的错误：
+
+1. **不需要邮件功能**：删除所有邮件相关的 Secrets（SMTP_SERVER、SMTP_PORT 等）
+2. **需要邮件功能**：确保所有 5 个邮件 Secrets 都有正确的值，不能为空
+
 ### API 请求失败
 
 1. 确认插件在 Open-VSX 上存在
 2. 检查网络连接
 3. 验证 `EXTENSION_NAMESPACE` 和 `EXTENSION_NAME` 是否正确
+
+**更多问题**：查看 [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
 ## 📊 数据存储
 

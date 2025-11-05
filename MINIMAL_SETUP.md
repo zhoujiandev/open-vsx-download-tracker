@@ -68,6 +68,11 @@ https://open-vsx.org/extension/redhat/vscode-yaml
 - `SENDER_PASSWORD`
 - `RECEIVER_EMAIL`
 
+⚠️ **重要提示**：
+- 如果不需要邮件功能，**不要添加**这些 Secrets
+- 如果已经添加了但值为空，请**删除**它们
+- 要么全部配置完整，要么全部不配置
+
 详细配置方法见 [config.example.md](config.example.md)
 
 ## ✅ 优势

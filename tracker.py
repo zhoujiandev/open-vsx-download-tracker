@@ -120,16 +120,29 @@ class OpenVSXTracker:
             body: 邮件正文
         """
         # 从环境变量获取邮件配置
-        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com') or 'smtp.gmail.com'
+        smtp_port_str = os.getenv('SMTP_PORT', '587') or '587'
+        try:
+            smtp_port = int(smtp_port_str)
+        except ValueError:
+            smtp_port = 587
         sender_email = os.getenv('SENDER_EMAIL')
         sender_password = os.getenv('SENDER_PASSWORD')
         receiver_email = os.getenv('RECEIVER_EMAIL')
         
-        if not all([sender_email, sender_password, receiver_email]):
+        # 检查必需的邮件配置
+        if not sender_email or not sender_password or not receiver_email:
             print("✗ 邮件配置不完整，跳过发送")
-            print(f"  发送方: {sender_email}")
-            print(f"  接收方: {receiver_email}")
+            if sender_email:
+                print(f"  发送方: {sender_email}")
+            if receiver_email:
+                print(f"  接收方: {receiver_email}")
+            if not sender_email:
+                print(f"  缺少: SENDER_EMAIL")
+            if not sender_password:
+                print(f"  缺少: SENDER_PASSWORD")
+            if not receiver_email:
+                print(f"  缺少: RECEIVER_EMAIL")
             return
         
         try:

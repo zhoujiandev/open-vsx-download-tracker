@@ -96,14 +96,25 @@ myname@outlook.com
 
 **Gmail 应用专用密码设置步骤：**
 
+**方法 1（推荐）：直接访问**
+1. 直接访问：https://myaccount.google.com/apppasswords
+2. 登录你的 Google 账号（如果还未登录）
+3. 如果提示需要启用两步验证，请先启用
+4. 在"应用专用密码"页面，输入应用名称（如"Open-VSX Tracker"）
+5. 点击"创建"
+6. 复制生成的 16 位密码（格式类似：`abcd efgh ijkl mnop`）
+7. 将这个密码作为 `SENDER_PASSWORD`
+
+**方法 2：通过安全设置**
 1. 访问 https://myaccount.google.com/security
-2. 确保已启用"两步验证"（2-Step Verification）
-3. 在安全页面找到"应用专用密码"（App passwords）
-4. 选择应用类型为"邮件"，设备类型为"其他"
-5. 输入名称如"Open-VSX Tracker"
-6. 点击"生成"
-7. 复制生成的 16 位密码（格式类似：`abcd efgh ijkl mnop`）
-8. 将这个密码作为 `SENDER_PASSWORD`
+2. 找到并启用"两步验证"（2-Step Verification）
+3. 启用两步验证后，在同一页面向下滚动
+4. 找到"应用专用密码"（App passwords）选项
+5. 点击进入后按照方法 1 的步骤 4-7 操作
+
+**注意：**
+- 只有启用了两步验证后，才能看到"应用专用密码"选项
+- 如果找不到此选项，请确认你的账号已启用两步验证
 
 **QQ邮箱授权码设置：**
 

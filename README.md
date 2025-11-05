@@ -20,15 +20,26 @@
 
 在你的仓库中，进入 `Settings` → `Secrets and variables` → `Actions`，添加以下 Secrets：
 
+#### 🔴 必需配置（最小配置）
+
 | Secret 名称 | 说明 | 示例 |
 |------------|------|------|
 | `EXTENSION_NAMESPACE` | 插件的命名空间（发布者名称） | `redhat` |
 | `EXTENSION_NAME` | 插件名称 | `vscode-yaml` |
+
+#### 📧 可选配置（邮件通知）
+
+如果需要每天收到邮件报告，还需要配置以下 Secrets：
+
+| Secret 名称 | 说明 | 示例 |
+|------------|------|------|
 | `SMTP_SERVER` | SMTP 服务器地址 | `smtp.gmail.com` |
 | `SMTP_PORT` | SMTP 端口 | `587` |
 | `SENDER_EMAIL` | 发件人邮箱 | `your-email@gmail.com` |
 | `SENDER_PASSWORD` | 发件人邮箱密码或应用专用密码 | `your-app-password` |
 | `RECEIVER_EMAIL` | 收件人邮箱 | `receiver@example.com` |
+
+> 💡 **提示**：不配置邮件也能正常运行！数据会保存在 `download_history.json` 文件中，你可以随时在仓库中查看。
 
 #### 📝 如何找到你的插件信息？
 
@@ -124,6 +135,44 @@ open-vsx-download-tracker/
 ├── .gitignore                   # Git 忽略文件配置
 └── README.md                    # 项目文档
 ```
+
+## 📊 如何查看下载量数据
+
+### 方式 1：查看历史数据文件（无需邮件配置）
+
+每次运行后，数据会自动保存在仓库的 `download_history.json` 文件中：
+
+```json
+{
+  "2025-11-01": 1000,
+  "2025-11-02": 1050,
+  "2025-11-03": 1120,
+  "2025-11-04": 1180
+}
+```
+
+你可以：
+- 直接在 GitHub 仓库中查看该文件
+- 下载后用 Excel 等工具分析
+- 查看 Git 历史了解每天的变化
+
+### 方式 2：查看 Actions 运行日志
+
+进入 `Actions` → 选择任意一次运行 → 查看 "运行下载量追踪器" 步骤的输出：
+
+```
+昨日总下载量: 1,120
+今日总下载量: 1,180
+24小时新增: +60
+```
+
+### 方式 3：接收邮件报告（需配置邮件）
+
+配置邮件后，每天会收到包含以下内容的精美 HTML 邮件：
+- 📦 插件名称
+- 📊 当前总下载量
+- 📈 过去 24 小时新增
+- 📉 增长率百分比
 
 ## 🔧 高级配置
 

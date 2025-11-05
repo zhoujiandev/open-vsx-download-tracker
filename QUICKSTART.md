@@ -27,7 +27,12 @@ https://open-vsx.org/extension/redhat/vscode-yaml
 - **namespace**（命名空间）= `redhat`（第一个斜杠后的部分）
 - **extension name**（插件名）= `vscode-yaml`（第二个斜杠后的部分）
 
-### 步骤 3：准备邮箱配置
+### 步骤 3：准备邮箱配置（可选）
+
+> 💡 **这一步是可选的！** 如果只想查看数据不需要邮件通知，可以跳过此步骤直接到步骤 4，只配置插件信息即可。
+
+<details>
+<summary>📧 点击展开查看邮件配置说明</summary>
 
 #### 使用 Gmail（推荐）
 
@@ -64,25 +69,41 @@ SENDER_PASSWORD: 获取的授权码
 RECEIVER_EMAIL: 接收报告的邮箱
 ```
 
+</details>
+
 ### 步骤 4：在 GitHub 添加 Secrets
 
 1. 进入你 fork 的仓库
 2. 点击 **Settings**（设置）
 3. 左侧菜单选择 **Secrets and variables** → **Actions**
 4. 点击 **New repository secret** 按钮
-5. 依次添加以下 7 个 secrets：
+5. 添加以下 Secrets：
+
+#### 🔴 必需配置（最小配置）
+
+这 2 个是**必需的**，不配置无法运行：
 
 | Name | Value | 示例 |
 |------|-------|------|
 | `EXTENSION_NAMESPACE` | 你的插件命名空间 | `redhat` |
 | `EXTENSION_NAME` | 你的插件名称 | `vscode-yaml` |
+
+#### 📧 可选配置（邮件通知）
+
+如果需要每天收到邮件报告，**可选**添加以下 5 个：
+
+| Name | Value | 示例 |
+|------|-------|------|
 | `SMTP_SERVER` | SMTP服务器地址 | `smtp.gmail.com` |
 | `SMTP_PORT` | SMTP端口 | `587` |
 | `SENDER_EMAIL` | 发件人邮箱 | `your@gmail.com` |
 | `SENDER_PASSWORD` | 邮箱密码/授权码 | `your-app-password` |
 | `RECEIVER_EMAIL` | 收件人邮箱 | `your@gmail.com` |
 
-**提示：** 每次添加一个 secret，点击 "Add secret" 后再添加下一个。
+**💡 提示：** 
+- 不配置邮件也能正常运行，数据会保存在 `download_history.json` 中
+- 每次添加一个 secret，点击 "Add secret" 后再添加下一个
+- 邮件配置可以之后随时添加
 
 ### 步骤 5：设置 GitHub Actions 权限
 
@@ -110,11 +131,25 @@ RECEIVER_EMAIL: 接收报告的邮箱
 
 运行完成后（大约 30 秒到 1 分钟）：
 
-1. ✅ GitHub Actions 显示绿色勾号（成功）
-2. 📧 你的邮箱收到下载量报告
-3. 📁 仓库中出现 `download_history.json` 文件
+#### ✅ 成功标志：
+1. GitHub Actions 显示绿色勾号
+2. 仓库中出现 `download_history.json` 文件
+3. 如果配置了邮件，会收到下载量报告
 
-如果失败了：
+#### 📊 查看数据：
+
+**方式 1：查看历史文件**
+- 打开仓库中的 `download_history.json`
+- 可以看到每天的下载量记录
+
+**方式 2：查看 Actions 日志**
+- 点击运行记录 → "运行下载量追踪器" 步骤
+- 可以看到详细的统计输出
+
+**方式 3：查看邮件**（仅当配置了邮件）
+- 检查邮箱（包括垃圾邮件文件夹）
+
+#### ❌ 如果失败了：
 - 点击失败的运行记录
 - 查看红色叉号的步骤
 - 点击展开查看错误信息

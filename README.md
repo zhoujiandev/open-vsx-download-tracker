@@ -57,14 +57,26 @@
 3. 在"应用专用密码"中生成新密码
 4. 使用生成的密码作为 `SENDER_PASSWORD`
 
-### 3. 启用 GitHub Actions
+### 3. 设置 GitHub Actions 权限 ⚠️
+
+**这一步非常重要！** 否则会遇到 403 权限错误。
+
+1. 进入 `Settings` → `Actions` → `General`
+2. 滚动到 **Workflow permissions**
+3. 选择 ✅ **"Read and write permissions"**
+4. 勾选 ✅ **"Allow GitHub Actions to create and approve pull requests"**
+5. 点击 **Save** 保存
+
+> 📖 详细图文教程：[PERMISSIONS_SETUP.md](PERMISSIONS_SETUP.md)
+
+### 4. 启用 GitHub Actions
 
 1. 进入仓库的 `Actions` 标签页
 2. 如果 Actions 被禁用，点击 "I understand my workflows, go ahead and enable them"
 3. 找到 "Open-VSX Download Tracker" workflow
 4. 点击 "Enable workflow"
 
-### 4. 手动测试（可选）
+### 5. 手动测试（可选）
 
 在 `Actions` 页面：
 

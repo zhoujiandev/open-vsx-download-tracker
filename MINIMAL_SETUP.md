@@ -23,13 +23,24 @@ https://open-vsx.org/extension/redhat/vscode-yaml
 
 ### 配置步骤
 
-1. Fork 本仓库
-2. 进入 Settings → Secrets and variables → Actions
-3. 添加 2 个 Secrets：
-   - Name: `EXTENSION_NAMESPACE`，Value: 你的 namespace
-   - Name: `EXTENSION_NAME`，Value: 你的插件名
-4. 设置 Actions 权限为 "Read and write permissions"
-5. 手动运行一次 workflow 测试
+1. **Fork 本仓库**
+
+2. **添加 Secrets**
+   - 进入 Settings → Secrets and variables → Actions
+   - 添加 2 个 Secrets：
+     - Name: `EXTENSION_NAMESPACE`，Value: 你的 namespace
+     - Name: `EXTENSION_NAME`，Value: 你的插件名
+
+3. **设置 Actions 权限** ⚠️ 重要！
+   - Settings → Actions → General
+   - 滚动到 "Workflow permissions"
+   - 选择 ✅ "Read and write permissions"
+   - 勾选 ✅ "Allow GitHub Actions to create and approve pull requests"
+   - 点击 Save
+
+4. **手动运行测试**
+   - 进入 Actions 标签
+   - 选择 workflow 并手动运行一次
 
 ### 数据查看方式
 

@@ -105,13 +105,17 @@ RECEIVER_EMAIL: 接收报告的邮箱
 - 每次添加一个 secret，点击 "Add secret" 后再添加下一个
 - 邮件配置可以之后随时添加
 
-### 步骤 5：设置 GitHub Actions 权限
+### 步骤 5：设置 GitHub Actions 权限 ⚠️ 重要！
+
+**这一步非常重要！** 如果不设置，会导致 403 权限错误。
 
 1. 在仓库设置中，点击左侧的 **Actions** → **General**
 2. 滚动到最下方的 **Workflow permissions**
-3. 选择 **Read and write permissions**
-4. 勾选 **Allow GitHub Actions to create and approve pull requests**
+3. 选择 ✅ **Read and write permissions**（不是 Read repository contents）
+4. 勾选 ✅ **Allow GitHub Actions to create and approve pull requests**
 5. 点击 **Save** 保存
+
+> 💡 这个设置允许 GitHub Actions 自动提交 `download_history.json` 文件
 
 ### 步骤 6：启用 GitHub Actions
 

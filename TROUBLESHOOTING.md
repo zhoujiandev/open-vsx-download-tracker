@@ -30,7 +30,37 @@ ValueError: invalid literal for int() with base 10: ''
 
 ---
 
-### 错误 2：插件不存在 (404)
+### 错误 2：GitHub Actions 权限错误 (403)
+
+**错误信息：**
+```
+remote: Permission to xxx/open-vsx-download-tracker.git denied to github-actions[bot].
+fatal: unable to access 'https://github.com/xxx/': The requested URL returned error: 403
+Error: Process completed with exit code 128
+```
+
+**原因：**
+GitHub Actions 没有权限推送代码到仓库。
+
+**解决方案：**
+
+1. 进入仓库的 **Settings**（设置）
+2. 左侧菜单点击 **Actions** → **General**
+3. 滚动到页面最下方找到 **Workflow permissions**
+4. 选择 ✅ **"Read and write permissions"**（不是默认的 "Read repository contents and packages permissions"）
+5. 勾选 ✅ **"Allow GitHub Actions to create and approve pull requests"**
+6. 点击 **Save** 保存
+7. 重新运行 workflow
+
+**验证：**
+成功后，你会看到：
+- Actions 运行成功（绿色勾号）
+- 仓库中出现或更新了 `download_history.json` 文件
+- Git 提交历史中有一条来自 `github-actions[bot]` 的提交
+
+---
+
+### 错误 3：插件不存在 (404)
 
 **错误信息：**
 ```

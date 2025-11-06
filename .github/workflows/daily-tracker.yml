@@ -1,9 +1,9 @@
 name: Open-VSX Download Tracker
 
 on:
-  # 每天早上9点（UTC+0时间1点）运行
+  # 每天早上8点半（UTC+0时间0:30）运行
   schedule:
-    - cron: '0 1 * * *'  # UTC 1:00 AM = 北京时间 9:00 AM
+    - cron: '30 0 * * *'  # UTC 0:30 AM = 北京时间 8:30 AM
   
   # 允许手动触发
   workflow_dispatch:

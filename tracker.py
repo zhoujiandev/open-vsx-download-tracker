@@ -183,7 +183,7 @@ class OpenVSXTracker:
         Returns:
             str: HTML 格式的报告
         """
-        today = datetime.now().strftime("%Y年%m月%d日")
+        today = datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")
         
         # 计算增长百分比
         if last_count > 0:
@@ -231,7 +231,7 @@ class OpenVSXTracker:
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>📊 Open-VSX 下载量日报</h1>
+                    <h1>📊 Open-VSX 下载量读数</h1>
                     <p>{today}</p>
                 </div>
                 

@@ -94,32 +94,24 @@ class OpenVSXTracker:
             tuple: (增长量, 昨日总下载量, 上次统计时间)
         """
         history = self.load_history()
-        today = datetime.now().strftime("%Y-%m-%d")
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # 获取最近一次记录
         last_timestamp = None
+        last_count = current_count
+        
         if history:
-            last_date = max(history.keys())
-            last_record = history[last_date]
-            
-            # 兼容旧格式（直接是数字）和新格式（字典）
-            if isinstance(last_record, dict):
-                last_count = last_record.get('count', 0)
-                last_timestamp = last_record.get('timestamp')
-            else:
-                last_count = last_record
+            # 按时间戳排序，获取最近一次记录
+            sorted_timestamps = sorted(history.keys())
+            last_timestamp = sorted_timestamps[-1]
+            last_count = int(history[last_timestamp])
             
             increase = current_count - last_count
         else:
             increase = 0
-            last_count = current_count
         
-        # 保存今天的数据（新格式：包含下载量和时间戳）
-        history[today] = {
-            'count': current_count,
-            'timestamp': current_time
-        }
+        # 保存今天的数据（新格式：时间戳为key，下载量字符串为value）
+        history[current_time] = str(current_count)
         self.save_history(history)
         
         return increase, last_count, last_timestamp

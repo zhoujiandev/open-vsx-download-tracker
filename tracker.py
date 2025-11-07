@@ -11,8 +11,11 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+# 北京时区 (UTC+8)
+BEIJING_TZ = timezone(timedelta(hours=8))
 
 
 class OpenVSXTracker:
@@ -85,16 +88,16 @@ class OpenVSXTracker:
     
     def calculate_daily_increase(self, current_count):
         """
-        计算过去24小时的下载量增长
+        计算距离上次统计的下载量增长（使用北京时间记录）
         
         Args:
             current_count: 当前总下载量
             
         Returns:
-            tuple: (增长量, 昨日总下载量, 上次统计时间)
+            tuple: (增长量, 上次统计的总下载量, 上次统计时间)
         """
         history = self.load_history()
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now(BEIJING_TZ).strftime("%Y-%m-%d %H:%M:%S")
         
         # 获取最近一次记录
         last_timestamp = None
@@ -172,18 +175,18 @@ class OpenVSXTracker:
     
     def generate_report(self, current_count, daily_increase, last_count, last_timestamp):
         """
-        生成 HTML 格式的统计报告
+        生成 HTML 格式的统计报告（使用北京时间）
         
         Args:
             current_count: 当前总下载量
-            daily_increase: 24小时增长量
-            last_count: 昨日总下载量
-            last_timestamp: 上次统计时间
+            daily_increase: 距上次统计的增长量
+            last_count: 上次统计的总下载量
+            last_timestamp: 上次统计时间（北京时间格式）
             
         Returns:
             str: HTML 格式的报告
         """
-        today = datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")
+        today = datetime.now(BEIJING_TZ).strftime("%Y年%m月%d日 %H:%M:%S")
         
         # 计算增长百分比
         if last_count > 0:
@@ -195,8 +198,8 @@ class OpenVSXTracker:
         time_elapsed = "首次统计"
         if last_timestamp:
             try:
-                last_dt = datetime.strptime(last_timestamp, "%Y-%m-%d %H:%M:%S")
-                current_dt = datetime.now()
+                last_dt = datetime.strptime(last_timestamp, "%Y-%m-%d %H:%M:%S").replace(tzinfo=BEIJING_TZ)
+                current_dt = datetime.now(BEIJING_TZ)
                 time_diff = current_dt - last_dt
                 
                 days = time_diff.days
@@ -279,7 +282,7 @@ class OpenVSXTracker:
         执行主程序逻辑
         """
         print("=" * 60)
-        print(f"Open-VSX Download Tracker - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Open-VSX Download Tracker - {datetime.now(BEIJING_TZ).strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 60)
         print(f"正在追踪: {self.namespace}/{self.extension_name}")
         print()
@@ -301,7 +304,7 @@ class OpenVSXTracker:
         print()
         
         # 生成并发送报告
-        subject = f"📊 {self.namespace}.{self.extension_name} 下载量日报 - {datetime.now().strftime('%Y-%m-%d')}"
+        subject = f"📊 {self.namespace}.{self.extension_name} 下载量日报 - {datetime.now(BEIJING_TZ).strftime('%Y-%m-%d')}"
         body = self.generate_report(current_count, daily_increase, last_count, last_timestamp)
         
         self.send_email(subject, body)

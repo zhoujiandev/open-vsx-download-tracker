@@ -16,9 +16,14 @@ def check_env_vars():
     print("检查环境变量配置")
     print("=" * 60)
     
+    # 必需的环境变量（最小配置）
     required_vars = [
         'EXTENSION_NAMESPACE',
-        'EXTENSION_NAME',
+        'EXTENSION_NAME'
+    ]
+    
+    # 可选的环境变量（邮件通知）
+    optional_vars = [
         'SMTP_SERVER',
         'SMTP_PORT',
         'SENDER_EMAIL',
@@ -26,8 +31,20 @@ def check_env_vars():
         'RECEIVER_EMAIL'
     ]
     
-    missing_vars = []
+    print("【必需配置】")
+    missing_required = []
     for var in required_vars:
+        value = os.getenv(var)
+        if value:
+            print(f"✓ {var}: {value}")
+        else:
+            print(f"✗ {var}: 未设置")
+            missing_required.append(var)
+    
+    print()
+    print("【可选配置 - 邮件通知】")
+    missing_optional = []
+    for var in optional_vars:
         value = os.getenv(var)
         if value:
             # 隐藏密码
@@ -37,16 +54,20 @@ def check_env_vars():
                 display_value = value
             print(f"✓ {var}: {display_value}")
         else:
-            print(f"✗ {var}: 未设置")
-            missing_vars.append(var)
+            print(f"○ {var}: 未设置（可选）")
+            missing_optional.append(var)
     
     print()
     
-    if missing_vars:
-        print(f"❌ 缺少 {len(missing_vars)} 个必需的环境变量")
+    if missing_required:
+        print(f"❌ 缺少 {len(missing_required)} 个必需的环境变量")
         return False
     else:
-        print("✅ 所有环境变量都已设置")
+        print("✅ 必需的环境变量已设置")
+        if len(missing_optional) > 0:
+            print(f"ℹ️  邮件配置未完整设置（缺少 {len(missing_optional)} 项），将跳过邮件发送")
+        else:
+            print("✅ 邮件配置已完整设置")
         return True
 
 
@@ -93,9 +114,9 @@ def test_openvsx_api():
 
 
 def test_smtp_connection():
-    """测试 SMTP 连接"""
+    """测试 SMTP 连接（可选）"""
     print("=" * 60)
-    print("测试 SMTP 连接")
+    print("测试 SMTP 连接（可选 - 邮件通知）")
     print("=" * 60)
     
     smtp_server = os.getenv('SMTP_SERVER')
@@ -104,7 +125,8 @@ def test_smtp_connection():
     sender_password = os.getenv('SENDER_PASSWORD')
     
     if not all([smtp_server, smtp_port, sender_email, sender_password]):
-        print("✗ 跳过测试（缺少 SMTP 配置）")
+        print("ℹ️  跳过测试（SMTP 配置未完整设置）")
+        print("   不影响核心追踪功能，只是不会发送邮件通知")
         return False
     
     try:
@@ -139,18 +161,21 @@ def main():
     """主函数"""
     print("\n🔍 Open-VSX Download Tracker - 配置测试工具\n")
     
-    results = []
+    # 必需测试
+    required_results = []
     
     # 测试环境变量
-    results.append(check_env_vars())
+    env_check = check_env_vars()
+    required_results.append(env_check)
     print()
     
     # 测试 API
-    results.append(test_openvsx_api())
+    api_check = test_openvsx_api()
+    required_results.append(api_check)
     print()
     
-    # 测试 SMTP
-    results.append(test_smtp_connection())
+    # 测试 SMTP（可选）
+    smtp_check = test_smtp_connection()
     print()
     
     # 总结
@@ -158,18 +183,32 @@ def main():
     print("测试总结")
     print("=" * 60)
     
-    if all(results):
-        print("🎉 所有测试通过！配置正确，可以正常运行。")
+    # 判断核心功能是否可用
+    core_passed = all(required_results)
+    
+    if core_passed:
+        print("🎉 核心配置测试通过！可以正常运行追踪功能。")
+        print()
+        if smtp_check:
+            print("✅ 邮件通知功能：已配置且测试通过")
+        else:
+            print("ℹ️  邮件通知功能：未配置或测试失败（不影响核心功能）")
         print()
         print("下一步：")
         print("1. 将配置添加到 GitHub Secrets")
-        print("2. 启用 GitHub Actions")
-        print("3. 手动运行一次工作流进行测试")
+        print("   - 必需：EXTENSION_NAMESPACE, EXTENSION_NAME")
+        if not smtp_check:
+            print("   - 可选：SMTP_SERVER, SMTP_PORT, SENDER_EMAIL, SENDER_PASSWORD, RECEIVER_EMAIL")
+        print("2. 设置 Actions 权限为 'Read and write permissions'")
+        print("3. 启用 GitHub Actions")
+        print("4. 手动运行一次工作流进行测试")
         return 0
     else:
-        print("❌ 部分测试失败，请检查配置。")
+        print("❌ 核心配置测试失败，请检查配置。")
         print()
-        print("详细帮助请查看 config.example.md 文件")
+        print("详细帮助请查看：")
+        print("- SETUP_GUIDE.md - 完整设置指南")
+        print("- TROUBLESHOOTING.md - 故障排查")
         return 1
 
 

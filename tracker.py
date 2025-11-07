@@ -91,25 +91,38 @@ class OpenVSXTracker:
             current_count: 当前总下载量
             
         Returns:
-            tuple: (增长量, 昨日总下载量)
+            tuple: (增长量, 昨日总下载量, 上次统计时间)
         """
         history = self.load_history()
         today = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # 获取最近一次记录
+        last_timestamp = None
         if history:
             last_date = max(history.keys())
-            last_count = history[last_date]
+            last_record = history[last_date]
+            
+            # 兼容旧格式（直接是数字）和新格式（字典）
+            if isinstance(last_record, dict):
+                last_count = last_record.get('count', 0)
+                last_timestamp = last_record.get('timestamp')
+            else:
+                last_count = last_record
+            
             increase = current_count - last_count
         else:
             increase = 0
             last_count = current_count
         
-        # 保存今天的数据
-        history[today] = current_count
+        # 保存今天的数据（新格式：包含下载量和时间戳）
+        history[today] = {
+            'count': current_count,
+            'timestamp': current_time
+        }
         self.save_history(history)
         
-        return increase, last_count
+        return increase, last_count, last_timestamp
     
     def send_email(self, subject, body):
         """
@@ -165,7 +178,7 @@ class OpenVSXTracker:
         except Exception as e:
             print(f"✗ 发送邮件失败: {e}")
     
-    def generate_report(self, current_count, daily_increase, last_count):
+    def generate_report(self, current_count, daily_increase, last_count, last_timestamp):
         """
         生成 HTML 格式的统计报告
         
@@ -173,6 +186,7 @@ class OpenVSXTracker:
             current_count: 当前总下载量
             daily_increase: 24小时增长量
             last_count: 昨日总下载量
+            last_timestamp: 上次统计时间
             
         Returns:
             str: HTML 格式的报告
@@ -184,6 +198,27 @@ class OpenVSXTracker:
             percentage = (daily_increase / last_count) * 100
         else:
             percentage = 0
+        
+        # 计算距离上次统计的时间
+        time_elapsed = "首次统计"
+        if last_timestamp:
+            try:
+                last_dt = datetime.strptime(last_timestamp, "%Y-%m-%d %H:%M:%S")
+                current_dt = datetime.now()
+                time_diff = current_dt - last_dt
+                
+                days = time_diff.days
+                hours = time_diff.seconds // 3600
+                minutes = (time_diff.seconds % 3600) // 60
+                
+                if days > 0:
+                    time_elapsed = f"{days}天{hours}小时{minutes}分钟"
+                elif hours > 0:
+                    time_elapsed = f"{hours}小时{minutes}分钟"
+                else:
+                    time_elapsed = f"{minutes}分钟"
+            except:
+                time_elapsed = "未知"
         
         html = f"""
         <html>
@@ -220,7 +255,12 @@ class OpenVSXTracker:
                     </div>
                     
                     <div class="stat-item">
-                        <div class="stat-label">过去24小时新增</div>
+                        <div class="stat-label">距离上次统计</div>
+                        <div class="stat-value">{time_elapsed}</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">新增下载量</div>
                         <div class="stat-value increase">+{daily_increase:,}</div>
                     </div>
                     
@@ -260,16 +300,17 @@ class OpenVSXTracker:
             return
         
         # 计算增长量
-        daily_increase, last_count = self.calculate_daily_increase(current_count)
+        daily_increase, last_count, last_timestamp = self.calculate_daily_increase(current_count)
         
-        print(f"昨日总下载量: {last_count:,}")
-        print(f"今日总下载量: {current_count:,}")
-        print(f"24小时新增: +{daily_increase:,}")
+        print(f"上次统计时间: {last_timestamp if last_timestamp else '首次统计'}")
+        print(f"上次总下载量: {last_count:,}")
+        print(f"当前总下载量: {current_count:,}")
+        print(f"新增下载量: +{daily_increase:,}")
         print()
         
         # 生成并发送报告
         subject = f"📊 {self.namespace}.{self.extension_name} 下载量日报 - {datetime.now().strftime('%Y-%m-%d')}"
-        body = self.generate_report(current_count, daily_increase, last_count)
+        body = self.generate_report(current_count, daily_increase, last_count, last_timestamp)
         
         self.send_email(subject, body)
         

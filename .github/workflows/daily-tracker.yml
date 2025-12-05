@@ -44,16 +44,6 @@ jobs:
             echo "未找到历史数据文件，将创建新文件"
           fi
       
-      - name: 验证配置（调试用）
-        env:
-          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
-          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
-        run: |
-          echo "=== 邮件配置验证 ==="
-          echo "SENDER_EMAIL: *****${SENDER_EMAIL:5}"
-          echo "RECEIVER_EMAIL: *****${RECEIVER_EMAIL:5}"
-          echo "===================="
-
       - name: 运行下载量追踪器
         env:
           EXTENSION_NAMESPACE: ${{ secrets.EXTENSION_NAMESPACE }}
